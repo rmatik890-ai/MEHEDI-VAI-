@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEHEDI VAI</title>
+    <!-- ফন্ট আইকন -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- বেসিক রিসেট ও আগের স্টাইল --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: #000;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* ব্যাকগ্রাউন্ড সাইট (iframe) */
+        #bg-site {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%; 
+            border: none;
+            z-index: 0;
+        }
+
+        /* সিগনাল পেজ কন্টেইনার */
+        #signal-page-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%; /* ফুল হাইট নেওয়া হলো, ফুটার হ্যান্ডেল করবে */
+            padding-bottom: 60px; /* ফুটারের জন্য জায়গা */
+            background: rgba(10, 10, 15, 0.95); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(5px);
+            transition: padding-bottom 0.3s; /* স্মুথ ট্রানজিশন */
+        }
+
+        /* মেইন বক্স ডিজাইন */
+        .content-box {
+            width: 320px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 20px;
+            background: rgba(30, 30, 40, 0.9);
+            border: 2px solid #d600ff;
+            box-shadow: 0 0 20px rgba(214, 0, 255, 0.5);
+            border-radius: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .content-box::-webkit-scrollbar {
+            width: 5px;
+        }
+        .content-box::-webkit-scrollbar-thumb {
+            background: #d600ff; 
+            border-radius: 10px;
+        }
+
+        /* --- লগিন সেকশন স্টাইল --- */
+        .login-profile-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #d600ff;
+            box-shadow: 0 0 15px #d600ff;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #00ffff;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ffff;
+            text-transform: uppercase;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border: 1px solid #d600ff;
+            background: #111;
+            color: white;
+            outline: none;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .btn-grad {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(90deg, #d600ff, #00ffff);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(214, 0, 255, 0.4);
+        }
+
+        .telegram-login-btn {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 10px;
+            background: #229ED9;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 0 10px #229ED9;
+        }
+
+        /* --- ড্যাশবোর্ড / হ্যাক ইন্টারফেস --- */
+        #hack-dashboard {
+            display: none;
+        }
+
+        .info-card {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #333;
+            margin-bottom: 15px;
+        }
+
+        #currentPeriod {
+            font-size: 14px;
+            color: #00ffff;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        #liveTime {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .prediction-box {
+            background: rgba(0, 50, 0, 0.6);
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: 900;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 15px;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .history-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 10px;
+            border: 1px solid #d600ff;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            color: #fff;
+        }
+
+        thead {
+            background: #d600ff;
+            color: white;
+        }
+
+        th, td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #333;
+            text-align: center;
+        }
+
+        .num { font-weight: bold; }
+        .green { color: #00ff00; }
+        .red { color: #ff0055; }
+        .violet { color: #bf00ff; }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .dot.green { background-color: #00ff00; }
+        .dot.red { background-color: #ff0055; }
+        .dot.violet { background-color: #bf00ff; }
+
+        /* --- ফুটার মেনু --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: #000;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 9999;
+            border-top: 2px solid #d600ff;
+            box-shadow: 0 -5px 20px rgba(214, 0, 255, 0.3);
+            transition: transform 0.3s ease-in-out; /* স্লাইড এনিমেশন */
+        }
+
+        /* ফুটার লুকানোর ক্লাস */
+        .bottom-nav.hide-nav {
+            transform: translateY(100%); /* নিচে চলে যাবে */
+        }
+
+        .nav-item {
+            color: #666;
+            text-align: center;
+            font-size: 12px;
+            cursor: pointer;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: 0.3s;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .nav-item.active {
+            color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            text-shadow: 0 0 5px #00ffff;
+        }
+
+        /* --- টগল বাটন (তীর) --- */
+        #nav-toggle-btn {
+            position: fixed;
+            bottom: 70px; /* ফুটারের একটু উপরে */
+            left: 10px;
+            width: 35px;
+            height: 35px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #d600ff;
+            color: #00ffff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(214, 0, 255, 0.5);
+            transition: all 0.3s ease-in-out;
+            animation: pulse 2s infinite;
+        }
+
+        /* বাটন যখন নিচে নামবে (ফুটার হাইড হলে) */
+        #nav-toggle-btn.btn-down {
+            bottom: 15px; /* একদম নিচে কর্নারে */
+            border-color: #fff;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(214, 0, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(214, 0, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(214, 0, 255, 0); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- ১. ব্যাকগ্রাউন্ড গেম সাইট (iframe) -->
+    <iframe id="bg-site" src="https://www.amarclub1.com/#/register?invitationCode=382251025101"></iframe>
+
+    <!-- ২. সিগনাল/হ্যাক পেজ (Signal Tab) -->
+    <div id="signal-page-container">
+        <div class="content-box">
+            
+            <!-- লগিন ফর্ম -->
+            <div id="login-section">
+                <img src="https://ik.imagekit.io/ljcih9oti/IMG_20251201_164654_838.jpg" class="login-profile-icon" alt="User">
+                <div class="header-title">MEHEDI VAI</div>
+                
+                <input type="password" id="passwordInput" placeholder="Enter Password">
+                
+                <button class="btn-grad" onclick="checkLogin()">Login Now</button>
+                
+                <a href="https://t.me/+KwtKlWL-5aA0YTM9" target="_blank" class="telegram-login-btn">
+                    <i class="fab fa-telegram-plane"></i> Contact Admin
+                </a>
+
+                <p id="error-msg" style="color:red; font-size:12px; margin-top:10px; display:none;">Password Wrong!</p>
+            </div>
+
+            <!-- হ্যাক ড্যাশবোর্ড -->
+            <div id="hack-dashboard">
+                <img src="https://ik.imagekit.io/ljcih9oti/IMG_20251201_164654_838.jpg" class="login-profile-icon" style="width: 50px; height: 50px; margin-bottom: 10px;">
+                <div class="header-title" style="font-size: 16px;">LIVE PREDICTION</div>
+
+                <!-- পিরিয়ড ও টাইম -->
+                <div class="info-card">
+                    <h2 id="currentPeriod">Loading...</h2>
+                    <div id="liveTime">Live Time: --:--:--</div>
+                </div>
+
+                <!-- প্রেডিকশন বক্স -->
+                <div class="prediction-box" id="predictionBox">
+                    Analyzing...
+                </div>
+
+                <!-- হিস্ট্রি টেবিল -->
+                <div class="history-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Period</th>
+                                <th>Num</th>
+                                <th>Size</th>
+                                <th>Color</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultBody">
+                            <tr><td colspan="4">Waiting for data...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Telegram Button -->
+                <a href="https://t.me/+KwtKlWL-5aA0YTM9" target="_blank" class="telegram-login-btn" style="background: #2AABEE; margin-top: 20px;">
+                    <i class="fab fa-telegram"></i> Join Prediction Team
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ৩. টগল বাটন (তীর) -->
+    <div id="nav-toggle-btn" onclick="toggleFooter()">
+        <i class="fas fa-chevron-down" id="toggle-icon"></i>
+    </div>
+
+    <!-- ৪. ফুটার নেভিগেশন (Footer Bar) -->
+    <div class="bottom-nav" id="footerNav">
+        <div class="nav-item active" onclick="switchTab('signal', this)">
+            <i class="fas fa-chart-line"></i>
+            <span>SIGNAL</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('game', this)">
+            <i class="fas fa-gamepad"></i>
+            <span>GAME</span>
+        </div>
+    </div>
+
+    <script>
+        // --- ফুটার টগল ফাংশন (নতুন যোগ করা হয়েছে) ---
+        function toggleFooter() {
+            const footer = document.getElementById('footerNav');
+            const toggleBtn = document.getElementById('nav-toggle-btn');
+            const icon = document.getElementById('toggle-icon');
+            const container = document.getElementById('signal-page-container');
+
+            // ক্লাস টগল করা (হাইড/শো)
+            footer.classList.toggle('hide-nav');
+            toggleBtn.classList.toggle('btn-down');
+
+            // আইকন পরিবর্তন এবং কন্টেইনার অ্যাডজাস্টমেন্ট
+            if (footer.classList.contains('hide-nav')) {
+                // যখন হাইড হবে
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up'); // উপরের দিকে তীর
+                container.style.paddingBottom = "0px"; // ফুল স্ক্রিন ভিউ
+            } else {
+                // যখন শো হবে
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down'); // নিচের দিকে তীর
+                container.style.paddingBottom = "60px"; // ফুটারের জায়গা
+            }
+        }
+
+        // --- ট্যাব সুইচিং লজিক ---
+        function switchTab(tabName, element) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            const signalPage = document.getElementById('signal-page-container');
+            if (tabName === 'game') {
+                signalPage.style.display = 'none';
+            } else {
+                signalPage.style.display = 'flex';
+            }
+        }
+
+        // --- লগিন সিস্টেম ---
+        const CORRECT_PASSWORD = "mahadi33";
+
+        function checkLogin() {
+            const inputPass = document.getElementById("passwordInput").value;
+            const errorMsg = document.getElementById("error-msg");
+
+            if (inputPass === CORRECT_PASSWORD) {
+                document.getElementById("login-section").style.display = "none";
+                document.getElementById("hack-dashboard").style.display = "block";
+                startPredictionSystem(); 
+            } else {
+                errorMsg.style.display = "block";
+                document.getElementById("passwordInput").style.border = "1px solid red";
+            }
+        }
+
+        // --- API & PREDICTION LOGIC ---
+        function startPredictionSystem() {
+            const CURRENT_API = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+            const HISTORY_API = 'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json';
+
+            const REQUEST_DATA = {
+                typeId: 1,
+                language: 0,
+                random: "e7fe6c090da2495ab8290dac551ef1ed",
+                signature: "1F390E2B2D8A55D693E57FD905AE73A7",
+                timestamp: 1723726679
+            };
+
+            function getBigSmall(num) {
+                return num >= 5 ? 'Big' : 'Small';
+            }
+
+            function getColorType(num) {
+                if ([1,3,7,9].includes(num)) return 'Green';
+                if ([2,4,6,8].includes(num)) return 'Red';
+                return 'Violet';
+            }
+
+            function getPrediction(history) {
+                const sizeList = history.map(h => getBigSmall(parseInt(h.number)));
+                const bigCount = sizeList.filter(s => s === 'Big').length;
+                const smallCount = sizeList.length - bigCount;
+
+                let streakSize = sizeList[0];
+                let streakCount = 1;
+                for (let i = 1; i < sizeList.length; i++) {
+                    if (sizeList[i] === streakSize) streakCount++;
+                    else break;
+                }
+
+                let predicted = '';
+                const recentPattern = sizeList.slice(0, 3).join(',');
+                for (let i = 3; i < sizeList.length - 3; i++) {
+                    const pattern = sizeList.slice(i, i + 3).join(',');
+                    if (pattern === recentPattern) {
+                        predicted = sizeList[i + 3];
+                        break;
+                    }
+                }
+
+                if (!predicted) {
+                    if (bigCount > smallCount + 2) predicted = 'Small';
+                    else if (smallCount > bigCount + 2) predicted = 'Big';
+                    else predicted = sizeList[0] === 'Big' ? 'Small' : 'Big';
+                }
+
+                if (streakCount >= 3) {
+                    predicted = streakSize === 'Big' ? 'Small' : 'Big';
+                }
+
+                return predicted;
+            }
+
+            function generateConfidence() {
+                return Math.floor(Math.random() * 20) + 80; 
+            }
+
+            async function loadCurrentPeriod() {
+                try {
+                    const res = await fetch(CURRENT_API, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(REQUEST_DATA)
+                    });
+                    const data = await res.json();
+                    return data.data?.issueNumber || "Unavailable";
+                } catch {
+                    return "Unavailable";
+                }
+            }
+
+            async function loadAndPredict() {
+                const currentPeriod = await loadCurrentPeriod();
+                document.getElementById('currentPeriod').innerText = "Period: " + currentPeriod;
+
+                try {
+                    const res = await fetch(HISTORY_API + '?ts=' + Date.now());
+                    const data = await res.json();
+                    const list = data.data.list.slice(0, 10);
+
+                    const tbody = document.getElementById('resultBody');
+                    tbody.innerHTML = '';
+                    list.forEach(item => {
+                        const num = parseInt(item.number);
+                        const size = getBigSmall(num);
+                        const colorClass = getColorType(num).toLowerCase();
+                        
+                        tbody.innerHTML += `
+                        <tr>
+                            <td>${item.issueNumber.slice(-4)}</td>
+                            <td class="num ${colorClass}">${num}</td>
+                            <td>${size}</td>
+                            <td><span class="dot ${colorClass}"></span></td>
+                        </tr>`;
+                    });
+
+                    const lastPeriod = localStorage.getItem("lastShownPeriod");
+                    if (currentPeriod !== lastPeriod) {
+                        const prediction = getPrediction(list);
+                        const confidence = generateConfidence();
+
+                        const predBox = document.getElementById("predictionBox");
+                        predBox.innerHTML = `
+                        <div style="font-size:14px; color:#fff;">PREDICTION</div>
+                        <div style="font-size:30px; margin:5px 0;">${prediction}</div>
+                        <span style="font-size: 12px; color: #ccc;">Confidence: ${confidence}%</span>`;
+
+                        if(prediction === 'Big') predBox.style.color = "#ffa500"; 
+                        else predBox.style.color = "#00ff00"; 
+
+                        localStorage.setItem("lastPrediction", prediction);
+                        localStorage.setItem("lastShownPeriod", currentPeriod);
+
+                        alert(`Period: ${currentPeriod}\nPrediction: ${prediction}\nConfidence: ${confidence}%\nTG: ARIF VAI MOOD HACK`);
+                    }
+                } catch (err) {
+                    console.log("API Error", err);
+                }
+            }
+
+            function updateLiveTime() {
+                const now = new Date();
+                const time = now.toLocaleTimeString('en-GB', { hour12: false });
+                document.getElementById('liveTime').innerText = "Live Time: " + time;
+            }
+
+            loadAndPredict();
+            updateLiveTime();
+
+            setInterval(() => {
+                loadAndPredict();
+                updateLiveTime();
+            }, 5000);
+        }
+    </script>
+
+</body>
+    </html>
